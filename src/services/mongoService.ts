@@ -1,7 +1,9 @@
 import { User } from "../models/userModels";
 
 export const getUsers = async () => {
+
     try{
+
         const users = await User.find({ deleteFlag: 0 });
         if (!users || users.length == 0) {
             console.log("No users found");
@@ -9,12 +11,14 @@ export const getUsers = async () => {
         }
         return users;
     } catch (error) {
+
         console.error("Error fetching users:", error);
         throw error;
     }
 }
 
 export const createUser = async (data: { username: string; email: string; password: string }) => {
+    
   try {
     
     const emailRegex = /.+\@.+\..+/;
@@ -60,9 +64,17 @@ export const createUser = async (data: { username: string; email: string; passwo
   }
 };
 
-// export const updateUser = async (id: string, data: any) => {
-//   return await User.findByIdAndUpdate(id, data, { new: true });
-// };
+export const updateUser = async (username: string, data: any) => {
+
+    try {
+
+        return await User.findOneAndUpdate({ username }, data, { new: true });
+    } catch (error) {
+
+        console.error("Error updating user:", error);
+        throw error;
+    }
+};
 
 // export const deleteUser = async (id: string) => {
 //   return await User.findByIdAndDelete(id);
