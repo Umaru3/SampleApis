@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getUsers } from "../services/mongoService";
+import { getUsers, createUser } from "../services/mongoService";
 
 export const fetchAllUsers = async (req : Request, res : Response) => {
     try {
@@ -10,10 +10,15 @@ export const fetchAllUsers = async (req : Request, res : Response) => {
     }
 };
 
-// export const create = async (req: Request, res: Response) => {
-//   const user = await createUser(req.body);
-//   res.json(user);
-// };
+export const createAUser = async (req: Request, res: Response) => {
+
+    try{
+        const user = await createUser(req.body);
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to create user" });
+    }
+};
 
 // export const update = async (req: Request, res: Response) => {
 //   const user = await updateUser(req.params.id, req.body);

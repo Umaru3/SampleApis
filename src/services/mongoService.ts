@@ -14,9 +14,51 @@ export const getUsers = async () => {
     }
 }
 
-// export const createUser = async (data: { name: string; email: string }) => {
-//   return await User.create(data);
-// };
+export const createUser = async (data: { username: string; email: string; password: string }) => {
+  try {
+    
+    const emailRegex = /.+\@.+\..+/;
+    const existingUser = await User.findOne({ username: data.username });
+    const existingEmail = await User.findOne({ email: data.email });
+
+    // Basic checks
+    if (!data) {
+      return "Missing data";
+    } else if (!data.username) {
+      return "Missing required fields: username is required.";
+    } else if (!data.email) {
+      return "Missing required fields: email is required.";
+    } else if (!data.password) {
+      return "Missing required fields: password is required.";
+    }
+
+    // Check for existing username and email
+    if(existingUser && existingEmail) {
+      return "Both Username and email already exist.";
+    }
+
+    //email format validation
+    if (!emailRegex.test(data.email)) {
+      return "Invalid email format.";
+    }
+
+    //username already exists checker
+    if (existingUser) {
+      return "Username already exists.";
+    }
+
+    //email already exists checker
+    if (existingEmail) {
+      return "Email already exists.";
+    }
+
+    return await User.create(data);
+
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
+  }
+};
 
 // export const updateUser = async (id: string, data: any) => {
 //   return await User.findByIdAndUpdate(id, data, { new: true });
