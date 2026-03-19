@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getUsers, createUser, updateUser, deleteFlagUser, deleteUser } from "../services/mongoService";
+import { getUsers, createUser, updateUser, deleteFlagUser, deleteUser, loginUser } from "../services/mongoService";
 
 export const fetchAllUsers = async (req : Request, res : Response) => {
 
@@ -67,3 +67,16 @@ export const deleteAUser = async (req: Request, res: Response) => {
         res.status(500).json({ error: "Failed to delete user" });
     }
 };
+
+export const loginAUser = async (req: Request, res: Response) => {
+
+  try {
+
+    const { email, password, deleteFlag } = req.body as { email: string; password: string; deleteFlag: number };
+    const result = await loginUser(email, password, deleteFlag);
+    res.json({ message: result });
+  }  catch (error) {
+    
+    res.status(500).json({ error: "Failed to login user" });
+  }
+}

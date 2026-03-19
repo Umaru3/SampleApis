@@ -1,5 +1,11 @@
 import { User } from "../models/userModels";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
+//fetch all users
 export const getUsers = async () => {
 
     try{
@@ -17,6 +23,7 @@ export const getUsers = async () => {
     }
 }
 
+//create/register user
 export const createUser = async (data: { username: string; email: string; password: string }) => {
     
   try {
@@ -64,6 +71,7 @@ export const createUser = async (data: { username: string; email: string; passwo
   }
 };
 
+//update user by username
 export const updateUser = async (username: string, data: any) => {
 
     try {
@@ -100,3 +108,37 @@ export const deleteUser = async (username: string) => {
     throw error;
   }
 };
+
+//login user
+export const loginUser = async (email: string, password: string, deleteFlag: number) => {
+
+  try {
+
+    const user = await User.findOne({email, deleteFlag: 0 });
+    if(!user) {return "User not found.";}
+
+    const isMatch = await comparePassword(password, user?.password || "");
+    if(!isMatch) {return "Invalid password.";}
+
+    const token = jwt.sign(
+      {id: user._id, email: user.email}, 
+      JWT_SECRET, 
+      { expiresIn: "1h" });
+    return { message: "Successfully logged in.", token };
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    throw error;
+  }
+}
+
+const comparePassword = async (candidatePassword: string, hashedPassword: string) => {
+
+  try {
+
+    return await bcrypt.compare(candidatePassword, hashedPassword);
+  } catch (error) {
+
+    console.error("Error comparing password:", error);
+    throw error;
+  }
+}
