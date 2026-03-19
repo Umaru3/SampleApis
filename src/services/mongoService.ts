@@ -25,7 +25,7 @@ export const createUser = async (data: { username: string; email: string; passwo
     const existingUser = await User.findOne({ username: data.username });
     const existingEmail = await User.findOne({ email: data.email });
 
-    // Basic checks
+    //basic checks
     if (!data) {
       return "Missing data";
     } else if (!data.username) {
@@ -36,7 +36,7 @@ export const createUser = async (data: { username: string; email: string; passwo
       return "Missing required fields: password is required.";
     }
 
-    // Check for existing username and email
+    //check for existing username and email
     if(existingUser && existingEmail) {
       return "Both Username and email already exist.";
     }
@@ -76,6 +76,27 @@ export const updateUser = async (username: string, data: any) => {
     }
 };
 
-// export const deleteUser = async (id: string) => {
-//   return await User.findByIdAndDelete(id);
-// };
+//delete user by deleteFlag
+export const deleteFlagUser = async (username: string) => {
+
+    try {
+
+        return await User.findOneAndUpdate({ username }, { deleteFlag: 1 }, { new: true });
+    } catch (error) {
+
+        console.error("Error updating user:", error);
+        throw error;
+    }
+};
+
+//delete actual user from db
+export const deleteUser = async (username: string) => {
+  try{
+    
+    return await User.findOneAndDelete({ username });
+  } catch (error) {
+
+    console.error("Error deleting user:", error);
+    throw error;
+  }
+};
