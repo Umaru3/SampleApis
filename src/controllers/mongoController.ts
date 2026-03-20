@@ -72,8 +72,9 @@ export const loginAUser = async (req: Request, res: Response) => {
 
   try {
 
-    const { email, password, deleteFlag } = req.body as { email: string; password: string; deleteFlag: number };
-    const result = await loginUser(email, password, deleteFlag);
+    const { email, password, username } = req.body as { email: string; password: string; username: string };
+    const identifier = email || username;
+    const result = await loginUser(identifier, password);
     res.json({ message: result });
   }  catch (error) {
     
