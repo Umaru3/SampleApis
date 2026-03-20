@@ -110,18 +110,21 @@ export const deleteUser = async (username: string) => {
 };
 
 //login user
-export const loginUser = async (email: string, password: string, deleteFlag: number) => {
+export const loginUser = async (identifier: string, password: string) => {
 
   try {
 
-    const user = await User.findOne({email, deleteFlag: 0 });
-    if(!user) {return "User not found.";}
+    if(!identifier || !password) {
+      return "Missing required fields required.";
+    }
+    const user = await User.findOne({ $or: [{ email: identifier }, { username: identifier }], deleteFlag: 0 });
+    if (!user) { return "User not found."; }
 
     const isMatch = await comparePassword(password, user?.password || "");
     if(!isMatch) {return "Invalid password.";}
 
     const token = jwt.sign(
-      {id: user._id, email: user.email}, 
+      {id: user._id, email: user.email, username: user.username}, 
       JWT_SECRET, 
       { expiresIn: "1h" });
     return { message: "Successfully logged in.", token };
