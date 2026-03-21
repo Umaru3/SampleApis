@@ -3,11 +3,20 @@ import dotenv from 'dotenv';
 import { connectDB } from './config/db';
 import userRoutes from './routes/userRoutes';
 import mongoRoutes from './routes/mongoRoutes';
+import cors from 'cors';
 
 dotenv.config();
 const app = express();
-const port = 3000;
+const port = 5000;
 connectDB();
+
+app.use(cors(
+    {
+        origin: 'http://localhost:3000', 
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        allowedHeaders: ['Content-Type', 'Authorization'], 
+    }
+));
 
 app.use(express.json());
 app.use('/api', userRoutes);
