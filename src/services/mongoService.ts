@@ -127,7 +127,7 @@ export const loginUser = async (identifier: string, password: string) => {
       {id: user._id, email: user.email, username: user.username}, 
       JWT_SECRET, 
       { expiresIn: "1h" });
-    return { message: "Successfully logged in.", token };
+    return { message: "Successfully logged in.", username: user.username, token };
   } catch (error) {
     console.error("Error logging in user:", error);
     throw error;

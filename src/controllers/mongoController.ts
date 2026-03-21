@@ -19,7 +19,8 @@ export const createAUser = async (req: Request, res: Response) => {
     try{
 
         const user = await createUser(req.body);
-        res.json(user);
+        const username = req.body.username;
+        res.json("successfully created user: " + username);
         console.log("Successfully created user: ", user);
     } catch (error) {
 
@@ -75,7 +76,7 @@ export const loginAUser = async (req: Request, res: Response) => {
     const { email, password, username } = req.body as { email: string; password: string; username: string };
     const identifier = email || username;
     const result = await loginUser(identifier, password);
-    res.json({ message: result });
+    res.json(result);
   }  catch (error) {
     
     res.status(500).json({ error: "Failed to login user" });
