@@ -10,13 +10,24 @@ const app = express();
 const port = process.env.PORT || 5000;
 connectDB();
 
-app.use(cors(
-    {
-        origin: 'http://localhost:3000', 
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: ['Content-Type', 'Authorization'], 
+const allowedOrigins = [
+  "http://localhost:3000",
+  process.env.CLIENT_URL    
+];
+
+app.use(cors({
+
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
     }
-));
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 
 app.use(express.json());
 app.use('/api', userRoutes);
